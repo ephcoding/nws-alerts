@@ -1,23 +1,23 @@
 import React from "react";
 import { Switch } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { NWS_ALERT_TYPES } from "../constants";
+import { getAsyncStorageObject } from "../services/async-storage";
+import { NWS_ALERT_TYPES, NWS_SETTINGS } from "../constants";
 
-export const SettingSwitch = (settingName) => {
+export const SettingSwitch = ({ settingName }) => {
+  // QUESTION: why is reg settingName prop = {"settingName": <settingName value>}
   const [isOn, setIsOn] = React.useState(false);
 
   const handleSwitchToggle = async () => {
     setIsOn((prevState) => !prevState);
-    let activeAsyncStorageKeys;
+    let asyncStorageKeys = await getAsyncStorageObject(NWS_SETTINGS);
 
-    console.log(">> SETTING >>\n", settingName);
-    (async () => {
-      activeAsyncStorageKeys = await AsyncStorage.getAllKeys();
-      console.log(">> ACTIVE ASYNC STORAGE KEYS >>\n", activeAsyncStorageKeys);
-    })();
+    console.log("******************************");
+    console.log("SETTING NAME: ", settingName);
+    console.log("ASYNC STORAGE KEYS: ", asyncStorageKeys);
+    console.log("******************************");
 
     try {
-      console.log("ACTIVE SYNC STORAGE KEYS\n", activeAsyncStorageKeys);
       let currentValue, settingsObj;
 
       // if (activeAsyncStorageKeys.length > 0) {
@@ -41,7 +41,7 @@ export const SettingSwitch = (settingName) => {
 
       // update (merge) current setting in AsyncStorage
     } catch (error) {
-      console.log("ERROR >>\n", error);
+      console.log("***** ERROR *****\n", error);
     }
   };
 
