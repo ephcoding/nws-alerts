@@ -1,43 +1,68 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { NWS_ASYNC_STORAGE_KEY } from "../constants";
-
-export const getAsyncStorageKeys = async () => {
-	return await AsyncStorage.getAllKeys();
-};
-
-export const getAsyncStorageObject = async (key) => {
+// -- NOTE:
+// JSON in -->
+// <-- JSON out
+export const getAsyncStorageKeys = async ({ setValue, setError }) => {
 	try {
-		const jsonStorage = await AsyncStorage.getItem(key);
-		return jsonStorage != null ? JSON.parse(jsonStorage) : null;
+		const allKeys = await AsyncStorage.getAllKeys();
+		setValue(allKeys);
 	} catch (error) {
-		console.log("ERROR CHECKING ASYNC STORAGE: ", error);
+		setError(error);
 	}
 };
 
-export const setAsyncStorageObject = async (key, settingsObjectAsJSON) => {
+export const getAsyncStorage = async ({ key, setValue, setError }) => {
 	try {
-		await AsyncStorage.setItem(key, settingsObjectAsJSON);
+		const value = await AsyncStorage.getItem(key);
+		setValue(value);
 	} catch (error) {
-		console.log("ERROR SETTING ASYNC STORAGE OBJECT: ", error);
+		setError(error);
 	}
 };
 
-export const updateAsyncStorageObject = async (valueObject) => {
+// -- for use with SINGLE STRING VALUES
+export const saveToAsyncStorage = async ({ key, value, setError }) => {
 	try {
-		await AsyncStorage.mergeItem(
-			NWS_ASYNC_STORAGE_KEY,
-			JSON.stringify(valueObject)
-		);
+		await AsyncStorage.setItem(key, value);
 	} catch (error) {
-		console.log("ERROR UPDATING ASYNC STORAGE: ");
+		setError(error);
 	}
 };
 
-export const asyncStorageContainsKey = async (key) => {
+// -- for use with OBJECTS
+export const mergeWithAsyncStorage = async ({ key, value, setError }) => {
 	try {
-		const allKeysArr = await AsyncStorage.getAllKeys();
-		return allKeysArr.includes(`${key}`);
+		await AsyncStorage.mergeItem(key, value);
 	} catch (error) {
-		console.log("ERROR CHECKING hasAsyncStorage(): ", error);
+		setError(value);
+	}
+};
+
+export const isInAsyncStorage = async ({ key, setBool, setError }) => {
+	try {
+		const allKeys = await AsyncStorage.getAllKeys();
+		setBool(allKeys.includes(`${key}`));
+	} catch (error) {
+		setError(error);
+	}
+};
+
+export const setAsyncStorageDefault = async ({
+	key,
+	defaultValue,
+	setError,
+}) => {
+	try {
+		await AsyncStorage.setItem(key, defaultValue);
+	} catch (error) {
+		setError(error);
+	}
+};
+
+export const removeAsyncStorage = async ({ key, setError }) => {
+	try {
+		await AsyncStorage.removeItem(key);
+	} catch (error) {
+		setError(error);
 	}
 };

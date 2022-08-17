@@ -3,10 +3,10 @@ import { Switch } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
 	getAsyncStorageObject,
-	setAsyncStorageObject,
-	updateAsyncStorageObject,
+	saveToAsyncStorage,
+	mergeWithAsyncStorage,
 } from "../services/async-storage";
-import { NWS_ALERT_TYPES, NWS_ASYNC_STORAGE_KEY } from "../constants";
+import { NWS_ALERT_TYPES, NWS_STORAGE_KEY } from "../constants";
 
 export const SettingSwitch = ({ setting, enabled }) => {
 	// QUESTION: why is reg setting prop = {"setting": <setting value>}
@@ -15,9 +15,9 @@ export const SettingSwitch = ({ setting, enabled }) => {
 	const handleSwitchToggle = async () => {
 		setIsOn((prevState) => !prevState);
 
-		await updateAsyncStorageObject({ [setting]: isOn });
+		await mergeWithAsyncStorage({ [setting]: isOn });
 
-		const asyncStorage = await getAsyncStorageObject(NWS_ASYNC_STORAGE_KEY);
+		const asyncStorage = await getAsyncStorageObject(NWS_STORAGE_KEY);
 		console.log("NEW VALUE: ", asyncStorage[setting]);
 	};
 

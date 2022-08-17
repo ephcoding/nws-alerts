@@ -1,8 +1,8 @@
-export const NWS_ASYNC_STORAGE_KEY = "@nws-settings";
+export const NWS_STORAGE_KEY = "@nws-settings";
 
 export const NWS_API_BASE_URL = "https://api.weather.gov";
 
-export const NWS_DEFAULT_ALERT_SETTINGS = {
+export const NWS_DEFAULT_SETTINGS = {
 	["911 Telephone Outage Emergency"]: false,
 	["Administrative Message"]: false,
 	["Air Quality Alert"]: false,

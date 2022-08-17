@@ -11,16 +11,13 @@ import {
 	View,
 } from "react-native";
 import { SettingSwitch } from "../components/SettingSwitch";
-import {
-	NWS_DEFAULT_ALERT_SETTINGS,
-	NWS_ASYNC_STORAGE_KEY,
-} from "../constants";
+import { NWS_DEFAULT_SETTINGS, NWS_STORAGE_KEY } from "../constants";
 import { getAsyncStorageObject } from "../services/async-storage";
 
 const handleResetAll = async () => {
 	await AsyncStorage.setItem(
-		NWS_ASYNC_STORAGE_KEY,
-		JSON.stringify(NWS_DEFAULT_ALERT_SETTINGS)
+		NWS_STORAGE_KEY,
+		JSON.stringify(NWS_DEFAULT_SETTINGS)
 	);
 };
 
@@ -31,7 +28,6 @@ export const SettingsScreen = () => {
 
 		return (
 			<View
-				key={item[0]}
 				style={{
 					flexDirection: "row",
 					alignItems: "center",
@@ -44,11 +40,13 @@ export const SettingsScreen = () => {
 		);
 	};
 	// TODO: create SettingSwitchFlatlist component and type-check w prop-types
+	// TODO: add 'Remove Async Storage' button
 	return (
 		<SafeAreaView
 			style={{ flex: 1, marginTop: StatusBar.currentHeight || 0, padding: 2 }}
 		>
 			<ResetBtn />
+			{/* <RemoveBtn */}
 			<FlatList
 				data={Object.entries({
 					["911 Telephone Outage Emergency"]: false,
