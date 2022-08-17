@@ -1,5 +1,3 @@
-// /** @jsx jsx */
-// import { jsx } from "theme-ui-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import React from "react";
 import {
@@ -12,16 +10,19 @@ import {
 } from "react-native";
 import { SettingSwitch } from "../components/SettingSwitch";
 import { NWS_DEFAULT_SETTINGS, NWS_STORAGE_KEY } from "../constants";
-import { getAsyncStorageObject } from "../services/async-storage";
-
-const handleResetAll = async () => {
-	await AsyncStorage.setItem(
-		NWS_STORAGE_KEY,
-		JSON.stringify(NWS_DEFAULT_SETTINGS)
-	);
-};
 
 export const SettingsScreen = () => {
+	const defaultStorage = Object.entries({
+		["911 Telephone Outage Emergency"]: false,
+		["Administrative Message"]: false,
+		["Air Quality Alert"]: false,
+	});
+	const [btnData, setBtnData] = React.useState(defaultStorage);
+
+	const handleResetAll = async () => {
+		await AsyncStorage.setItem(NWS_STORAGE_KEY, JSON.stringify(defaultStorage));
+	};
+
 	const renderItem = ({ item }) => {
 		const [alertType, isEnabled] = item;
 		console.log("RENDER ITEM: ", alertType, " | ", isEnabled);
@@ -42,17 +43,10 @@ export const SettingsScreen = () => {
 	// TODO: create SettingSwitchFlatlist component and type-check w prop-types
 	// TODO: add 'Remove Async Storage' button
 	return (
-		<SafeAreaView
-			style={{ flex: 1, marginTop: StatusBar.currentHeight || 0, padding: 2 }}
-		>
-			<ResetBtn />
-
+		<SafeAreaView style={{ flex: 1 }}>
+			<ResetBtn onPress={handleResetAll} />
 			<FlatList
-				data={Object.entries({
-					["911 Telephone Outage Emergency"]: false,
-					["Administrative Message"]: false,
-					["Air Quality Alert"]: false,
-				})}
+				data={btnData}
 				keyExtractor={([key, value]) => key}
 				renderItem={renderItem}
 			/>
@@ -60,10 +54,10 @@ export const SettingsScreen = () => {
 	);
 };
 
-function ResetBtn() {
+function ResetBtn(onPress) {
 	return (
 		<Pressable
-			onPress={handleResetAll}
+			onPress={onPress}
 			style={{
 				width: "25%",
 				backgroundColor: "royalblue",
