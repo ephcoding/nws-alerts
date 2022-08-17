@@ -1,49 +1,40 @@
 import React from "react";
 import { Switch } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { getAsyncStorageObject } from "../services/async-storage";
-import { NWS_ALERT_TYPES, NWS_SETTINGS } from "../constants";
+import {
+	getAsyncStorageObject,
+	setAsyncStorageObject,
+} from "../services/async-storage";
+import { NWS_ALERT_TYPES, NWS_ASYNC_STORAGE_KEY } from "../constants";
 
-export const SettingSwitch = ({ settingName }) => {
-  // QUESTION: why is reg settingName prop = {"settingName": <settingName value>}
-  const [isOn, setIsOn] = React.useState(false);
+export const SettingSwitch = ({ settingName, currentValue }) => {
+	// QUESTION: why is reg settingName prop = {"settingName": <settingName value>}
+	const [isOn, setIsOn] = React.useState(!!currentValue);
 
-  const handleSwitchToggle = async () => {
-    setIsOn((prevState) => !prevState);
-    let asyncStorageKeys = await getAsyncStorageObject(NWS_SETTINGS);
+	const handleSwitchToggle = async () => {
+		setIsOn((prevState) => !prevState);
+		currentSettings = await getAsyncStorageObject(NWS_ASYNC_STORAGE_KEY);
+		console.log("SETTINGS KEY: ", NWS_ASYNC_STORAGE_KEY);
 
-    console.log("******************************");
-    console.log("SETTING NAME: ", settingName);
-    console.log("ASYNC STORAGE KEYS: ", asyncStorageKeys);
-    console.log("******************************");
+		try {
+			let settings = await getAsyncStorageObject(NWS_ASYNC_STORAGE_KEY);
 
-    try {
-      let currentValue, settingsObj;
+			const updatedSettingsAsJSON = JSON.stringify({
+				...settings,
+				[settingName]: !settings[settingName],
+			});
 
-      // if (activeAsyncStorageKeys.length > 0) {
-      //   const jsonSettings = await AsyncStorage.getItem("@nws-settings");
-      //   const settings = await JSON.parse(jsonSettings);
-      //   currentValue = settings[settingName];
-      //   const updatedSettings = {
-      //     ...settings,
-      //     [settingName]: !currentValue,
-      //   };
-      //   AsyncStorage.setItem("@nws-settings", JSON.stringify(updatedSettings));
-      // } else {
-      //   NWS_ALERT_TYPES.forEach((alertType) => {
-      //     settingsObj[alertType] = alertType;
-      //   });
+			await setAsyncStorageObject(NWS_ASYNC_STORAGE_KEY, updatedSettingsAsJSON);
 
-      //   settingsObj[settingName] = true;
+			const updatedSettingsInAsyncStorage = await getAsyncStorageObject(
+				NWS_ASYNC_STORAGE_KEY
+			);
 
-      //   AsyncStorage.setItem("@nws-settings", JSON.stringify(settingsObj));
-      // }
+			console.log("SETTING UPDATED: ", updatedSettingsInAsyncStorage);
+		} catch (error) {
+			console.log("SET STORAGE VALUE ERROR: ", error);
+		}
+	};
 
-      // update (merge) current setting in AsyncStorage
-    } catch (error) {
-      console.log("***** ERROR *****\n", error);
-    }
-  };
-
-  return <Switch value={isOn} onValueChange={handleSwitchToggle} />;
+	return <Switch value={isOn} onValueChange={handleSwitchToggle} />;
 };

@@ -1,2 +1,2 @@
-export * from "./home";
-export * from "./settings";
+export { HomeScreen } from "./home";
+export { SettingsScreen } from "./settings";
