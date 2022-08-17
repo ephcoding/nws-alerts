@@ -1,35 +1,78 @@
 // /** @jsx jsx */
 // import { jsx } from "theme-ui-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import React from "react";
-import { FlatList, SafeAreaView, StatusBar, Text, View } from "react-native";
+import {
+	FlatList,
+	Pressable,
+	SafeAreaView,
+	StatusBar,
+	Text,
+	View,
+} from "react-native";
 import { SettingSwitch } from "../components/SettingSwitch";
-import { NWS_ALERT_TYPES, NWS_ASYNC_STORAGE_KEY } from "../constants";
+import {
+	NWS_DEFAULT_ALERT_SETTINGS,
+	NWS_ASYNC_STORAGE_KEY,
+} from "../constants";
 import { getAsyncStorageObject } from "../services/async-storage";
 
-export const SettingsScreen = () => {
-	// set all setting values to what's set in AsyncStorage
+const handleResetAll = async () => {
+	await AsyncStorage.setItem(
+		NWS_ASYNC_STORAGE_KEY,
+		JSON.stringify(NWS_DEFAULT_ALERT_SETTINGS)
+	);
+};
 
+export const SettingsScreen = () => {
 	const renderItem = ({ item }) => {
+		const [alertType, isEnabled] = item;
+		console.log("RENDER ITEM: ", alertType, " | ", isEnabled);
 		return (
 			<View
-				key={item}
+				key={item[0]}
 				style={{
 					flexDirection: "row",
 					alignItems: "center",
 					justifyContent: "space-between",
 				}}
 			>
-				<Text>{item}</Text>
-				<SettingSwitch settingName={item} currentValue={item[1]} />
+				<Text>{alertType}</Text>
+				<SettingSwitch setting={alertType} value={isEnabled} />
 			</View>
 		);
 	};
-
+	// TODO: create SettingSwitchFlatlist component and type-check w prop-types
 	return (
 		<SafeAreaView
 			style={{ flex: 1, marginTop: StatusBar.currentHeight || 0, padding: 2 }}
 		>
-			<FlatList data={NWS_ALERT_TYPES} renderItem={renderItem} />
+			<ResetBtn />
+			<FlatList
+				data={Object.entries({
+					["911 Telephone Outage Emergency"]: false,
+					["Administrative Message"]: false,
+					["Air Quality Alert"]: false,
+				})}
+				keyExtractor={({ item }) => item}
+				renderItem={renderItem}
+			/>
 		</SafeAreaView>
 	);
 };
+
+function ResetBtn() {
+	return (
+		<Pressable
+			onPress={handleResetAll}
+			style={{
+				width: "25%",
+				backgroundColor: "royalblue",
+				alignItems: "center",
+				paddingVertical: 5,
+			}}
+		>
+			<Text style={{ color: "white" }}>Reset All</Text>
+		</Pressable>
+	);
+}

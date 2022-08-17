@@ -7,9 +7,9 @@ import {
 } from "../services/async-storage";
 import { NWS_ALERT_TYPES, NWS_ASYNC_STORAGE_KEY } from "../constants";
 
-export const SettingSwitch = ({ settingName, currentValue }) => {
-	// QUESTION: why is reg settingName prop = {"settingName": <settingName value>}
-	const [isOn, setIsOn] = React.useState(!!currentValue);
+export const SettingSwitch = ({ setting, value }) => {
+	// QUESTION: why is reg setting prop = {"setting": <setting value>}
+	const [isOn, setIsOn] = React.useState(!!value);
 
 	const handleSwitchToggle = async () => {
 		setIsOn((prevState) => !prevState);
@@ -21,7 +21,7 @@ export const SettingSwitch = ({ settingName, currentValue }) => {
 
 			const updatedSettingsAsJSON = JSON.stringify({
 				...settings,
-				[settingName]: !settings[settingName],
+				[setting]: !settings[setting],
 			});
 
 			await setAsyncStorageObject(NWS_ASYNC_STORAGE_KEY, updatedSettingsAsJSON);

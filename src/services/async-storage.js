@@ -32,3 +32,12 @@ export const updateAsyncStorageObject = async (valueObject) => {
 		console.log("ERROR UPDATING ASYNC STORAGE: ");
 	}
 };
+
+export const asyncStorageContainsKey = async (key) => {
+	try {
+		const allKeysArr = await AsyncStorage.getAllKeys();
+		return allKeysArr.includes(`${key}`);
+	} catch (error) {
+		console.log("ERROR CHECKING hasAsyncStorage(): ", error);
+	}
+};
