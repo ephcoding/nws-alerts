@@ -46,7 +46,7 @@ export const SettingsScreen = () => {
 			style={{ flex: 1, marginTop: StatusBar.currentHeight || 0, padding: 2 }}
 		>
 			<ResetBtn />
-			{/* <RemoveBtn */}
+
 			<FlatList
 				data={Object.entries({
 					["911 Telephone Outage Emergency"]: false,
