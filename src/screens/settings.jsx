@@ -28,6 +28,7 @@ export const SettingsScreen = () => {
 	const renderItem = ({ item }) => {
 		const [alertType, isEnabled] = item;
 		console.log("RENDER ITEM: ", alertType, " | ", isEnabled);
+
 		return (
 			<View
 				key={item[0]}
@@ -38,7 +39,7 @@ export const SettingsScreen = () => {
 				}}
 			>
 				<Text>{alertType}</Text>
-				<SettingSwitch setting={alertType} value={isEnabled} />
+				<SettingSwitch setting={alertType} enabled={isEnabled} />
 			</View>
 		);
 	};
@@ -54,7 +55,7 @@ export const SettingsScreen = () => {
 					["Administrative Message"]: false,
 					["Air Quality Alert"]: false,
 				})}
-				keyExtractor={({ item }) => item}
+				keyExtractor={([key, value]) => key}
 				renderItem={renderItem}
 			/>
 		</SafeAreaView>
